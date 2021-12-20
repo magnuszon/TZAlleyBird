@@ -11,10 +11,10 @@ public class PlarformMutate : MonoBehaviour
     [SerializeField] private GameObject scoreLabel;
     [SerializeField] private GameObject SwitchTrigger;
     [SerializeField] private GameObject PlayerTrigger;
+    private LevelGeneration _generation;
 
     private void Start()
     {
-        collider.enabled = false;
         scoreLabel.SetActive(false);
     }
 
@@ -22,6 +22,7 @@ public class PlarformMutate : MonoBehaviour
     public void DI( StatistcSave save,LevelGeneration generation)
     {
         _statistcSave = save;
+        _generation = generation;
     }
 
     public void Triggered()
@@ -32,9 +33,14 @@ public class PlarformMutate : MonoBehaviour
         SwitchTrigger.SetActive(true);
     }
 
-    public void Reload()
+    public void Reload(bool resort = true)
     {
+        collider.enabled = false;
         SwitchTrigger.SetActive(false);
         PlayerTrigger.SetActive(true);
+        if (resort)
+        {
+            _generation.ResortPlatforms();
+        }
     }
 }

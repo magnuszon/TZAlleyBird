@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float baseSpeed, speedIncreaserPerSec;
     private float totalSpeed;
     [SerializeField] private float JumpPower;
+    [SerializeField] private float GroundcheckDistance = 1;
     [SerializeField] private bool Groundcheck;
 
     private void Awake()
@@ -54,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void GroundCheck()
     {
-        Groundcheck = Physics2D.Raycast(player.transform.position, Vector3.down, 0.6f);
+        Groundcheck = Physics2D.Raycast(player.transform.position, Vector3.down, GroundcheckDistance);
     }
     private void Jump()
     {
@@ -74,6 +75,7 @@ public class PlayerMovement : MonoBehaviour
                 currentMoveRight = !currentMoveRight;
             }
             player.transform.position+=Vector3.right*totalSpeed;
+            //_rigidbody2D.AddForce(Vector3.right*totalSpeed,ForceMode2D.Force);
         }
         else
         {
@@ -82,6 +84,7 @@ public class PlayerMovement : MonoBehaviour
                 currentMoveRight = !currentMoveRight;
             }
             player.transform.position+=Vector3.left*totalSpeed;
+            //_rigidbody2D.AddForce(Vector3.left*totalSpeed,ForceMode2D.Force);
         }
     }
 

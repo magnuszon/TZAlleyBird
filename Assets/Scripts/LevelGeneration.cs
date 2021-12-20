@@ -6,28 +6,39 @@ using UnityEngine.SceneManagement;
 
 public class LevelGeneration : MonoBehaviour
 {
-   //generation pattern
    [SerializeField] private int maximumPlatforms;
    [SerializeField] private float platformsDistance;
-   [SerializeField] private float minimumPlatformY;
+   [SerializeField] private float baseLevelDownSpeed;
+   [SerializeField] private float secondAdditionalSpeed;
    private List<Transform> platforms = new List<Transform>();
-   [SerializeField] private float platformDownMove=0.5f;
+   [SerializeField] private float totalSpeed;
+   [SerializeField] private Transform mapHub;
    
    private GameObject platform;
    private float spawnTimer;
    private StatistcSave _save;
+   private Transform _playerTransform;
 
-   private void Start()
+   private void AltStart()
    {
      StartGeneration();
+     totalSpeed = baseLevelDownSpeed;
    }
 
    private void Update()
    {
-       if (Input.GetKeyDown(KeyCode.W))
+       MovePlatforms();
+
+   }
+
+   private void MovePlatforms()
+   {
+       totalSpeed +=  secondAdditionalSpeed*Time.deltaTime ;
+       for (int i = 0; i < platforms.Count; i++)
        {
-           Regenerate();
+           platforms[i]. transform.position += Vector3.down* (totalSpeed* Time.deltaTime);
        }
+      
    }
 
    private void StartGeneration()
@@ -37,28 +48,39 @@ public class LevelGeneration : MonoBehaviour
        rootPoint.z = 0;
        for (int i = 0; i < maximumPlatforms; i++)
        {
-           GameObject newplatform = Instantiate(platform, rootPoint + (Vector3.down * platformsDistance*i),Quaternion.identity);
+           GameObject newplatform = Instantiate(platform, rootPoint + (Vector3.down * platformsDistance*i),Quaternion.identity,mapHub);
            newplatform.GetComponent<PlarformMutate>().DI(_save,this);
-           newplatform.GetComponent<PlatformMove>().DI(platformDownMove);
+           newplatform.name = "platform" + i;
            platforms.Add(newplatform.transform);
+          
        }
    }
-   private void Regenerate()
+   public void ResortPlatforms()
    {
        platforms[platforms.Count - 1].position = platforms[0].position + Vector3.up * platformsDistance;
-       platforms[platforms.Count - 1].GetComponent<PlarformMutate>().Reload();
        platforms.Insert(0,platforms[platforms.Count - 1]);
        platforms.RemoveAt(platforms.Count - 1);
    }
-
-   private void Test()
-   {
-       Debug.Log("test");
+   
+   public void DI(GameObject platform, StatistcSave _save, PlayerIdentity playerIdentity)
+   { 
+       this.platform = platform;
+      this._save = _save;
+      this._playerTransform = playerIdentity.transform;
+      AltStart();
+      UpdatePlayerDependence();
    }
 
-   public void DI(GameObject platform, StatistcSave _save)
+   private void UpdatePlayerDependence()
    {
-      this.platform = platform;
-      this._save = _save;
+       for (int i = 0; i < platforms.Count; i++)
+       {
+           if (platforms[i].transform.position.y > _playerTransform.position.y)
+           {
+               Debug.Log(platforms[i].name +" "+platforms[i].transform.position.y + "   "+_playerTransform.position.y);
+               platforms[i].GetComponent<PlarformMutate>().Reload(false);
+               
+           }
+       }
    }
 }

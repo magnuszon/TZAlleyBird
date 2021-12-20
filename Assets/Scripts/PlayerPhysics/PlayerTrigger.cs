@@ -7,7 +7,10 @@ public abstract class PlayerTrigger : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Triggered();
+        if (other.GetComponent<PlayerIdentity>() != null)
+        {
+            Triggered();
+        }
     }
 
     protected abstract void Triggered();
