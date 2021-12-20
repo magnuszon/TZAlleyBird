@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class PlarformMutate : MonoBehaviour
+public class PlatrformMutate : MonoBehaviour
 {
     private StatistcSave _statistcSave;
     [SerializeField] private Collider2D collider;

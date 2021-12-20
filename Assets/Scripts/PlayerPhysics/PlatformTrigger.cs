@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlatformTrigger : PlayerTrigger
 {
-   [SerializeField] private PlarformMutate _mutate;
+   [SerializeField] private PlatrformMutate _mutate;
    protected override void Triggered()
    {
        _mutate.Triggered();

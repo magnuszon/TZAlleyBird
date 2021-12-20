@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -14,21 +15,21 @@ public class StatistcSave : MonoBehaviour
     private float currentScore;
     private bool scoreCounted = true;
     private string fileName = "/sav.sav";
-   [SerializeField] private float maxScores;
-    private string deadScoreTextPart = " очков";
-    private string recordScoreTextPart = "рекорд: ";
-    private string heightText = "Height: ";
+    private float maxScores;
+    private string deadScoreTextPart = " scores";
+    private string recordScoreTextPart = "record: ";
+    private string heightText = "height: ";
     void Start()
     {
-        /*
-        string savFilePath = Application.persistentDataPath +fileName ;
-        if (File.Exists(savFilePath))
-        {
-            StringReader stringReader = new StringReader(savFilePath);
-            string maxScore =stringReader.ReadLine();
-            maxScores = float.Parse(maxScore);
+        SetCurrentScore();
+        StartCoroutine(CreateSav());
+        
+    }
 
-        }*/
+    private void SetCurrentScore()
+    {
+        recordScoretext.text = recordScoreTextPart + 0;
+        scoretext.text = heightText + 0;
     }
 
     public void AddScore()
@@ -38,6 +39,11 @@ public class StatistcSave : MonoBehaviour
             currentScore += 1;
         }
         scoretext.text = heightText + Mathf.Round(currentScore);
+        UpdateScore();
+    }
+
+    private void UpdateScore()
+    {
         if (maxScores > currentScore)
         {
             recordScoretext.text = recordScoreTextPart + maxScores;
@@ -47,34 +53,64 @@ public class StatistcSave : MonoBehaviour
             recordScoretext.text = recordScoreTextPart + currentScore;
         }
     }
-
     public void StopGame()
     {
         scoreCounted = false;
         string savFilePath = Application.persistentDataPath +fileName ;
-      /*  if (!File.Exists(savFilePath))
+        if (maxScores < currentScore)
         {
-            fs = File.Create(savFilePath);
+            WriteCurrentScores();
         }
-        else
-        {
-            fs = File.Open(savFilePath,FileMode.Open);
-        }
-
-        if (fs.re == null)
-        {
-            Debug.LogError("emptyFile");
-        }
-        byte[] data = new UTF8Encoding(true).GetBytes(currentScore.ToString());
-        fs.Write(data, 0, data.Length);*/
        
         maxScoreDeadtext.text = Mathf.Round(currentScore) + deadScoreTextPart;
-    } 
+    }
+
+    private void OnApplicationQuit()
+    {
+        StopGame();
+    }
 
     public void DI(TextMeshProUGUI scoretext, TextMeshProUGUI maxScoreDeadtext, TextMeshProUGUI recordScoretext)
     {
         this.scoretext = scoretext;
         this.maxScoreDeadtext = maxScoreDeadtext;
         this.recordScoretext = recordScoretext;
+    }
+
+    private IEnumerator CreateSav()
+    {
+        string savFilePath = Application.persistentDataPath +fileName ;
+        if (!File.Exists(savFilePath))
+        {
+            File.Create(savFilePath);
+            yield return new WaitForSeconds(.1f);
+            StreamWriter sw = new StreamWriter(savFilePath);
+            sw.WriteLine("0");
+            sw.Close();
+        }
+        yield return new WaitForSeconds(.1f);
+        ReadScoresFromFile();
+    }
+
+    private void ReadScoresFromFile()
+    {
+        string savFilePath = Application.persistentDataPath +fileName ;
+        StreamReader sr;
+        if (File.Exists(savFilePath))
+        {
+            sr = new StreamReader(savFilePath);
+            string stroke = sr.ReadLine();
+            sr.Close();
+            maxScores =int.Parse(stroke);
+            UpdateScore();
+        }
+    }
+
+    private void WriteCurrentScores()
+    {
+        string savFilePath = Application.persistentDataPath +fileName ;
+        StreamWriter sw = new StreamWriter(savFilePath);
+        sw.WriteLine(currentScore);
+        sw.Close();
     }
 }

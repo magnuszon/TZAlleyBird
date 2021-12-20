@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlatformGeneratorSwitchTrigger : MonoBehaviour
 {
-   [SerializeField] private PlarformMutate _mutate;
+   [SerializeField] private PlatrformMutate _mutate;
    private void OnTriggerEnter2D(Collider2D other)
    {
       _mutate.Reload();

@@ -49,7 +49,7 @@ public class LevelGeneration : MonoBehaviour
        for (int i = 0; i < maximumPlatforms; i++)
        {
            GameObject newplatform = Instantiate(platform, rootPoint + (Vector3.down * platformsDistance*i),Quaternion.identity,mapHub);
-           newplatform.GetComponent<PlarformMutate>().DI(_save,this);
+           newplatform.GetComponent<PlatrformMutate>().DI(_save,this);
            newplatform.name = "platform" + i;
            platforms.Add(newplatform.transform);
           
@@ -62,9 +62,9 @@ public class LevelGeneration : MonoBehaviour
        platforms.RemoveAt(platforms.Count - 1);
    }
    
-   public void DI(GameObject platform, StatistcSave _save, PlayerIdentity playerIdentity)
+   public void DI(PlatrformMutate platform, StatistcSave _save, PlayerIdentity playerIdentity)
    { 
-       this.platform = platform;
+       this.platform = platform.gameObject;
       this._save = _save;
       this._playerTransform = playerIdentity.transform;
       AltStart();
@@ -77,9 +77,7 @@ public class LevelGeneration : MonoBehaviour
        {
            if (platforms[i].transform.position.y > _playerTransform.position.y)
            {
-               Debug.Log(platforms[i].name +" "+platforms[i].transform.position.y + "   "+_playerTransform.position.y);
-               platforms[i].GetComponent<PlarformMutate>().Reload(false);
-               
+               platforms[i].GetComponent<PlatrformMutate>().Reload(false);
            }
        }
    }

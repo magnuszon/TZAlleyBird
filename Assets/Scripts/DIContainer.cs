@@ -13,9 +13,8 @@ public class DIContainer : MonoBehaviour
    private EnemyMove _enemyMove;
    private PlayerDeath _playerDeath;
    private UiHub _uiHub;
-   [SerializeField]private PlayerIdentity _playerIdentity;
-   [SerializeField] private GameObject player;
-   [SerializeField] private GameObject platform;
+   [SerializeField] private PlayerIdentity _playerIdentity;
+   [SerializeField] private PlatrformMutate platform;
    [SerializeField] private Button respawnButton;
    [SerializeField] private GameObject deadPopup;
    [SerializeField] private TextMeshProUGUI scoreText;
@@ -30,10 +29,9 @@ public class DIContainer : MonoBehaviour
 
    private void SetDependences()
    {
-      _playerMovement.DI(player);
-      _playerDeath.DI(player.transform);
+      _playerMovement.DI(_playerIdentity);
+      _playerDeath.DI(_playerIdentity,deadPopup);
       respawnButton.onClick.AddListener(_uiHub.RespawnButton);
-      _playerDeath.onDead.AddListener(_uiHub.ShowDeadPopup);
       _uiHub.DI(deadPopup);
       _saves.DI(scoreText,maxScoreDeadText, recordScoreText);
       

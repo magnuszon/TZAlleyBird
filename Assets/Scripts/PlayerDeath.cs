@@ -7,7 +7,8 @@ using UnityEngine.Events;
 public class PlayerDeath : MonoBehaviour
 {
     private Transform playerTransform;
-    public UnityEvent onDead;
+    private PlayerIdentity player;
+    private GameObject deadPopup;
     public static PlayerDeath Instance { get; set; }
 
     private void Awake()
@@ -20,9 +21,11 @@ public class PlayerDeath : MonoBehaviour
         StartCoroutine(UnderTextureCaseFix());
         
     }
-    public void DI(Transform playerTransform)
+    public void DI(PlayerIdentity player,GameObject deadPopup)
     {
-        this.playerTransform = playerTransform;
+        this.playerTransform = player.transform;
+        this.player = player;
+        this.deadPopup = deadPopup;
     }
 
     private IEnumerator UnderTextureCaseFix()
@@ -40,6 +43,7 @@ public class PlayerDeath : MonoBehaviour
 
     public void PlayerDead()
     {
-        onDead.Invoke();
+        player.DisableCollider();
+        deadPopup.SetActive(true);
     }
 }

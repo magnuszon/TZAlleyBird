@@ -74,8 +74,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 currentMoveRight = !currentMoveRight;
             }
-            player.transform.position+=Vector3.right*totalSpeed;
-            //_rigidbody2D.AddForce(Vector3.right*totalSpeed,ForceMode2D.Force);
+            player.transform.position+=Vector3.right*(totalSpeed*Time.deltaTime);
         }
         else
         {
@@ -83,14 +82,13 @@ public class PlayerMovement : MonoBehaviour
             {
                 currentMoveRight = !currentMoveRight;
             }
-            player.transform.position+=Vector3.left*totalSpeed;
-            //_rigidbody2D.AddForce(Vector3.left*totalSpeed,ForceMode2D.Force);
+            player.transform.position+=Vector3.left*(totalSpeed*Time.deltaTime);
         }
     }
 
-    public void DI(GameObject player)
+    public void DI(PlayerIdentity player)
     {
-        this.player = player;
+        this.player = player.gameObject;
     }
 
 }
