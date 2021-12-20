@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class LevelGeneration : MonoBehaviour
 {
@@ -13,11 +14,14 @@ public class LevelGeneration : MonoBehaviour
    private List<Transform> platforms = new List<Transform>();
    [SerializeField] private float totalSpeed;
    [SerializeField] private Transform mapHub;
+   [SerializeField] private float enemySpawnRate;
+   [SerializeField] private List<EnemyParams> enemies;
    
    private GameObject platform;
    private float spawnTimer;
    private StatistcSave _save;
    private Transform _playerTransform;
+   [SerializeField]private float timeToSpawn=10;
 
    private void AltStart()
    {
@@ -28,6 +32,10 @@ public class LevelGeneration : MonoBehaviour
    private void Update()
    {
        MovePlatforms();
+       if (timeToSpawn > 0)
+       {
+           timeToSpawn -= Time.deltaTime;
+       }
 
    }
 
@@ -60,8 +68,20 @@ public class LevelGeneration : MonoBehaviour
        platforms[platforms.Count - 1].position = platforms[0].position + Vector3.up * platformsDistance;
        platforms.Insert(0,platforms[platforms.Count - 1]);
        platforms.RemoveAt(platforms.Count - 1);
+       if (timeToSpawn <=0)
+       {
+           TrySpawnEnemy();
+       }
    }
-   
+
+   private void TrySpawnEnemy()
+   {
+       if (enemySpawnRate > Random.Range(0, 100))
+       {
+           platforms[0].GetComponent<PlatrformMutate>().SpawnRandomEnemy(enemies[Random.Range(0,enemies.Count)].gameObject);
+       }
+   }
+
    public void DI(PlatrformMutate platform, StatistcSave _save, PlayerIdentity playerIdentity)
    { 
        this.platform = platform.gameObject;

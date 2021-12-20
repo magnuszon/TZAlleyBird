@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class PlayerDeath : MonoBehaviour
 {
     private Transform playerTransform;
     private PlayerIdentity player;
     private GameObject deadPopup;
+    public UnityEvent deadEvent= new UnityEvent();
     public static PlayerDeath Instance { get; set; }
 
     private void Awake()
@@ -35,14 +37,15 @@ public class PlayerDeath : MonoBehaviour
             
             if (playerTransform.position.y < -10)
             {
-                PlayerDead();
+                OnPlayerDead();
             }
             yield return new WaitForSeconds(1);
         }
     }
 
-    public void PlayerDead()
+    public void OnPlayerDead()
     {
+        deadEvent.Invoke();
         player.DisableCollider();
         deadPopup.SetActive(true);
     }

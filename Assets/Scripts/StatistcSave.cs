@@ -1,16 +1,14 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using System.IO;
-using System.Text;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class StatistcSave : MonoBehaviour
 {
-    private TextMeshProUGUI scoretext;
-    private TextMeshProUGUI maxScoreDeadtext;
+    private TextMeshProUGUI currentScoreText;
+    private TextMeshProUGUI deadScoreText;
     private TextMeshProUGUI recordScoretext;
     private float currentScore;
     private bool scoreCounted = true;
@@ -19,8 +17,12 @@ public class StatistcSave : MonoBehaviour
     private string deadScoreTextPart = " scores";
     private string recordScoreTextPart = "record: ";
     private string heightText = "height: ";
+    private string savFilePath;
+    public UnityAction deadAction;
     void Start()
     {
+        savFilePath = Application.persistentDataPath +fileName ;
+      //  deadAction += DeadAction;
         SetCurrentScore();
         StartCoroutine(CreateSav());
         
@@ -29,7 +31,7 @@ public class StatistcSave : MonoBehaviour
     private void SetCurrentScore()
     {
         recordScoretext.text = recordScoreTextPart + 0;
-        scoretext.text = heightText + 0;
+        currentScoreText.text = heightText + 0;
     }
 
     public void AddScore()
@@ -38,7 +40,7 @@ public class StatistcSave : MonoBehaviour
         {
             currentScore += 1;
         }
-        scoretext.text = heightText + Mathf.Round(currentScore);
+        currentScoreText.text = heightText + Mathf.Round(currentScore);
         UpdateScore();
     }
 
@@ -47,22 +49,23 @@ public class StatistcSave : MonoBehaviour
         if (maxScores > currentScore)
         {
             recordScoretext.text = recordScoreTextPart + maxScores;
+            deadScoreText.text = maxScores + deadScoreTextPart ;
         }
         else
         {
             recordScoretext.text = recordScoreTextPart + currentScore;
+            deadScoreText.text = currentScore +deadScoreTextPart;
         }
     }
     public void StopGame()
     {
         scoreCounted = false;
-        string savFilePath = Application.persistentDataPath +fileName ;
         if (maxScores < currentScore)
         {
             WriteCurrentScores();
         }
        
-        maxScoreDeadtext.text = Mathf.Round(currentScore) + deadScoreTextPart;
+        deadScoreText.text = Mathf.Round(currentScore) + deadScoreTextPart;
     }
 
     private void OnApplicationQuit()
@@ -70,16 +73,15 @@ public class StatistcSave : MonoBehaviour
         StopGame();
     }
 
-    public void DI(TextMeshProUGUI scoretext, TextMeshProUGUI maxScoreDeadtext, TextMeshProUGUI recordScoretext)
+    public void DI(TextMeshProUGUI currentScoreText, TextMeshProUGUI deadScoreText, TextMeshProUGUI recordScoretext)
     {
-        this.scoretext = scoretext;
-        this.maxScoreDeadtext = maxScoreDeadtext;
+        this.currentScoreText = currentScoreText;
+        this.deadScoreText = deadScoreText;
         this.recordScoretext = recordScoretext;
     }
 
     private IEnumerator CreateSav()
     {
-        string savFilePath = Application.persistentDataPath +fileName ;
         if (!File.Exists(savFilePath))
         {
             File.Create(savFilePath);
@@ -94,7 +96,6 @@ public class StatistcSave : MonoBehaviour
 
     private void ReadScoresFromFile()
     {
-        string savFilePath = Application.persistentDataPath +fileName ;
         StreamReader sr;
         if (File.Exists(savFilePath))
         {
@@ -108,9 +109,15 @@ public class StatistcSave : MonoBehaviour
 
     private void WriteCurrentScores()
     {
-        string savFilePath = Application.persistentDataPath +fileName ;
+       
         StreamWriter sw = new StreamWriter(savFilePath);
         sw.WriteLine(currentScore);
         sw.Close();
+    }
+
+    public void DeadAction()
+    {
+        UpdateScore();
+        WriteCurrentScores();
     }
 }

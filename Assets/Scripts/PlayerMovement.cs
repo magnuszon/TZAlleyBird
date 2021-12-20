@@ -73,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
             if (player.transform.position.x > bounds)
             {
                 currentMoveRight = !currentMoveRight;
+                _rigidbody2D.velocity = Vector2.zero;
             }
             player.transform.position+=Vector3.right*(totalSpeed*Time.deltaTime);
         }
@@ -81,6 +82,7 @@ public class PlayerMovement : MonoBehaviour
             if (player.transform.position.x < -bounds)
             {
                 currentMoveRight = !currentMoveRight;
+                _rigidbody2D.velocity = Vector2.zero;
             }
             player.transform.position+=Vector3.left*(totalSpeed*Time.deltaTime);
         }
@@ -91,4 +93,8 @@ public class PlayerMovement : MonoBehaviour
         this.player = player.gameObject;
     }
 
+    public float StealBoundsInfo()
+    {
+        return bounds;
+    }
 }

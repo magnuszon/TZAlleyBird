@@ -14,6 +14,6 @@ public class KillTrigger : PlayerTrigger
 
    protected override void Triggered()
    {
-      playerDeath.PlayerDead();
+      playerDeath.OnPlayerDead();
    }
 }

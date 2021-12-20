@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class DIContainer : MonoBehaviour
@@ -17,8 +18,8 @@ public class DIContainer : MonoBehaviour
    [SerializeField] private PlatrformMutate platform;
    [SerializeField] private Button respawnButton;
    [SerializeField] private GameObject deadPopup;
-   [SerializeField] private TextMeshProUGUI scoreText;
-   [SerializeField] private TextMeshProUGUI maxScoreDeadText;
+   [SerializeField] private TextMeshProUGUI currentScoreText;
+   [SerializeField] private TextMeshProUGUI deadScoreText;
    [SerializeField] private TextMeshProUGUI recordScoreText;
 
    private void Start()
@@ -33,9 +34,11 @@ public class DIContainer : MonoBehaviour
       _playerDeath.DI(_playerIdentity,deadPopup);
       respawnButton.onClick.AddListener(_uiHub.RespawnButton);
       _uiHub.DI(deadPopup);
-      _saves.DI(scoreText,maxScoreDeadText, recordScoreText);
+      _saves.DI(currentScoreText,deadScoreText, recordScoreText);
       
       _generation.DI(platform,_saves,_playerIdentity);
+      _saves.deadAction += _saves.DeadAction;
+      _playerDeath.deadEvent.AddListener( _saves.deadAction);
    }
 
    private void SelfInitialise()

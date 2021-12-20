@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class PlatrformMutate : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class PlatrformMutate : MonoBehaviour
     [SerializeField] private GameObject scoreLabel;
     [SerializeField] private GameObject SwitchTrigger;
     [SerializeField] private GameObject PlayerTrigger;
+    [SerializeField] private List<Transform> enemySpawnPoints;
     private LevelGeneration _generation;
 
     private void Start()
@@ -42,5 +44,11 @@ public class PlatrformMutate : MonoBehaviour
         {
             _generation.ResortPlatforms();
         }
+    }
+
+    public void SpawnRandomEnemy(GameObject newEnemy)
+    {
+        int spawnPoint = Random.Range(0, enemySpawnPoints.Count);
+        Instantiate(newEnemy, enemySpawnPoints[spawnPoint].position, Quaternion.identity, enemySpawnPoints[spawnPoint]);
     }
 }
